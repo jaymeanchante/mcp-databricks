@@ -46,8 +46,8 @@ Current implementation support the "Git Credentials" and "Repos" endpoint from t
 ## Support
 The MCP Databricks API currently support the following endpoints:
 
-Create table in markdown
 | Support | Type | Category | Subcategory |
 |---------|------|----------|-------------|
 |   ✅   | workspace | databricks_workspace | git_credentials |
 |   ✅   | workspace | databricks_workspace | repos |
+|   ✅   | workspace | databricks_workspace | secret |

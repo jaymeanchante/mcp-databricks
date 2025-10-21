@@ -180,5 +180,136 @@ def delete_repo(repo_id: int) -> str:
     response = requests.delete(databricks_host + url, headers=headers)
     return response.text
 
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def delete_acl(principal: str, scope: str) -> str:
+    """Delete the access control list (ACL) for a principal on a secret scope."""
+    url = "/api/2.0/secrets/acls/delete"
+    data = {
+        "principal": principal,
+        "scope": scope
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def get_acl(principal: str, scope: str) -> str:
+    """Get the access control list (ACL) for a principal on a secret scope."""
+    url = "/api/2.0/secrets/acls/get"
+    data = {
+        "principal": principal,
+        "scope": scope
+    }
+    response = requests.get(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def list_acls(scope: str) -> str:
+    """List the access control lists (ACLs) for a secret scope."""
+    url = "/api/2.0/secrets/acls/list"
+    data = {
+        "scope": scope
+    }
+    response = requests.get(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def create_update_acl(
+    principal: str,
+    scope: str,
+    permission: Literal["READ", "WRITE", "MANAGE"]
+    ) -> str:
+    """Create or update the access control list (ACL) for a principal on a secret scope."""
+    url = "/api/2.0/secrets/acls/set"
+    data = {
+        "principal": principal,
+        "scope": scope,
+        "permission": permission,
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def delete_secret(scope: str, key: str) -> str:
+    """Delete a secret from a secret scope."""
+    url = "/api/2.0/secrets/delete"
+    data = {
+        "scope": scope,
+        "key": key
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def get_secret(scope: str, key: str) -> str:
+    """Get a secret from a secret scope."""
+    url = "/api/2.0/secrets/get"
+    data = {
+        "scope": scope,
+        "key": key
+    }
+    response = requests.get(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def list_secrets(scope: str) -> str:
+    """List secrets in a secret scope."""
+    url = "/api/2.0/secrets/list"
+    data = {
+        "scope": scope
+    }
+    response = requests.get(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def create_secret(
+    scope: str,
+    key: str,
+    string_value: Annotated[Optional[str] | None, "Optional. The string value of the secret. Either string_value or bytes_value must be provided."] = None,
+    bytes_value: Annotated[Optional[bytes] | None, "Optional. The byte value of the secret. Either string_value or bytes_value must be provided."] = None,
+    ) -> str:
+    """Create a secret in a secret scope."""
+    url = "/api/2.0/secrets/put"
+    data = {
+        "scope": scope,
+        "key": key,
+        "string_value": string_value,
+        "bytes_value": bytes_value,
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def create_scope(
+    scope: str,
+    initial_manage_principal: Annotated[Optional[str] | None, "Optional. The principal (user or group) that is granted the MANAGE permission on the created secret scope. If not specified, the caller is granted the MANAGE permission."] = None,
+    scope_backend_type: Annotated[Optional[Literal["DATABRICKS", "AZURE_KEYVAULT"]] | None, "Optional. If not specified, will default to DATABRICKS."] = None
+    ) -> str:
+    """Create a secret scope."""
+    url = "/api/2.0/secrets/scopes/create"
+    data = {
+        "scope": scope,
+        "initial_manage_principal": initial_manage_principal,
+        "scope_backend_type": scope_backend_type,
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def delete_scope(scope: str) -> str:
+    """Delete a secret scope."""
+    url = "/api/2.0/secrets/scopes/delete"
+    data = {
+        "scope": scope
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "secret"])
+def list_scopes() -> str:
+    """List secret scopes."""
+    url = "/api/2.0/secrets/scopes/list"
+    response = requests.get(databricks_host + url, headers=headers)
+    return response.text
+
 if __name__ == "__main__":
     mcp.run()
