@@ -311,5 +311,109 @@ def list_scopes() -> str:
     response = requests.get(databricks_host + url, headers=headers)
     return response.text
 
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def get_workspace_object_permission(
+    workspace_object_type: str,
+    workspace_object_id: str,
+    ) -> str:
+    """Get workspace object permissions"""
+    url = f"/api/2.0/permissions/{workspace_object_type}/{workspace_object_id}"
+    response = requests.get(databricks_host + url, headers=headers)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def set_workspace_object_permission(
+    workspace_object_type: str,
+    workspace_object_id: str,
+    access_control_list: Annotated[Optional[List[AccessControlEntry]] | None, "Optional. List of access control entries"] = None,
+    ) -> str:
+    """Set workspace object permissions"""
+    url = f"/api/2.0/permissions/{workspace_object_type}/{workspace_object_id}"
+    data = {"access_control_list": access_control_list}
+    response = requests.put(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def update_workspace_object_permission(
+    workspace_object_type: str,
+    workspace_object_id: str,
+    access_control_list: Annotated[Optional[List[AccessControlEntry]] | None, "Optional. List of access control entries"] = None,
+    ) -> str:
+    """Update workspace object permissions"""
+    url = f"/api/2.0/permissions/{workspace_object_type}/{workspace_object_id}"
+    data = {"access_control_list": access_control_list}
+    response = requests.patch(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def get_workspace_object_permission_levels(
+    workspace_object_type: str,
+    workspace_object_id: str,
+    ) -> str:
+    """Get workspace object permission levels"""
+    url = f"/api/2.0/permissions/{workspace_object_type}/{workspace_object_id}/permissionLevels"
+    response = requests.get(databricks_host + url, headers=headers)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def delete_workspace_object(path: str, recursive: bool | None = False) -> str:
+    """Delete a workspace object"""
+    url = "/api/2.0/workspace/delete"
+    data = {"path": path, "recursive": recursive}
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def export_workspace_object(
+    path: str,
+    format: Literal["SOURCE", "HTML", "JUPYTER", "DBC", "R_MARKDOWN", "AUTO", "RAW"] = "SOURCE",
+    direct_download: bool | None = False,
+    ) -> str:
+    """Export a workspace object"""
+    url = "/api/2.0/workspace/export"
+    params = {"path": path, "format": format, "direct_download": direct_download}
+    response = requests.get(databricks_host + url, headers=headers, params=params)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def get_object_status(path: str) -> str:
+    """Get the status of a workspace object"""
+    url = "/api/2.0/workspace/get-status"
+    params = {"path": path}
+    response = requests.get(databricks_host + url, headers=headers, params=params)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def import_workspace_object(
+    path: str,
+    content: Annotated[Optional[str] | None, "Optional. Base64-encoded content of the object to be imported. Required if overwrite is true or if the object does not already exist at the specified path."] = None,
+    format: Literal["SOURCE", "HTML", "JUPYTER", "DBC", "R_MARKDOWN", "AUTO", "RAW"] = "SOURCE",
+    language: Annotated[Optional[Literal["SCALA", "PYTHON", "SQL", "R"]] | None, "Optional. This value is set only if the object type is NOTEBOOK."] = None,
+    overwrite: bool | None = False,
+    ) -> str:
+    """Import a workspace object"""
+    url = "/api/2.0/workspace/import"
+    data = {"path": path, "content": content, "format": format, "language": language, "overwrite": overwrite}
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def list_workspace_objects(path: str, notebooks_modified_after: Annotated[int | None, "Optional. UTC timestamp in milliseconds"] = None) -> str:
+    """List workspace objects"""
+    url = "/api/2.0/workspace/list"
+    params = {"path": path}
+    if notebooks_modified_after:
+        params["notebooks_modified_after"] = notebooks_modified_after
+    response = requests.get(databricks_host + url, headers=headers, params=params)
+    return response.text
+
+@mcp.tool(tags=["workspace", "databricks_workspace", "workspace"])
+def create_directory(path: str) -> str:
+    """Create a directory in the workspace"""
+    url = "/api/2.0/workspace/mkdirs"
+    data = {"path": path}
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
 if __name__ == "__main__":
     mcp.run()

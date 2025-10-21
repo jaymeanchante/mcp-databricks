@@ -51,3 +51,4 @@ The MCP Databricks API currently support the following endpoints:
 |   ✅   | workspace | databricks_workspace | git_credentials |
 |   ✅   | workspace | databricks_workspace | repos |
 |   ✅   | workspace | databricks_workspace | secret |
+|   ✅   | workspace | databricks_workspace | workspace |
