@@ -415,5 +415,123 @@ def create_directory(path: str) -> str:
     response = requests.post(databricks_host + url, headers=headers, json=data)
     return response.text
 
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def get_cluster_policy_permissions(
+    cluster_policy_id: str,
+    ) -> str:
+    """Get cluster policy permissions"""
+    url = f"/api/2.0/permissions/cluster-policies/{cluster_policy_id}"
+    response = requests.get(databricks_host + url, headers=headers)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def set_cluster_policy_permissions(
+    cluster_policy_id: str,
+    access_control_list: Annotated[Optional[List[AccessControlEntry]] | None, "Optional. List of access control entries"] = None,
+    ) -> str:
+    """Set cluster policy permissions"""
+    url = f"/api/2.0/permissions/cluster-policies/{cluster_policy_id}"
+    data = {"access_control_list": access_control_list}
+    response = requests.put(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def update_cluster_policy_permissions(
+    cluster_policy_id: str,
+    access_control_list: Annotated[Optional[List[AccessControlEntry]] | None, "Optional. List of access control entries"] = None,
+    ) -> str:
+    """Update cluster policy permissions"""
+    url = f"/api/2.0/permissions/cluster-policies/{cluster_policy_id}"
+    data = {"access_control_list": access_control_list}
+    response = requests.patch(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def get_cluster_policy_permission_levels(
+    cluster_policy_id: str,
+    ) -> str:
+    """Get cluster policy permission levels"""
+    url = f"/api/2.0/permissions/cluster-policies/{cluster_policy_id}/permissionLevels"
+    response = requests.get(databricks_host + url, headers=headers)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def create_cluster_policy(
+    name: str,
+    definition: Annotated[Optional[dict] | None, "Optional. Dictionary containing policy definition. Example: {'custom_tags.test_tag': {'type': 'fixed', 'value': 'test_value'}}"] = None,    
+    description: Annotated[Optional[str] | None, "Optional. Description of the cluster policy."] = None,
+    libraries: Annotated[Optional[List[str]] | None, "Optional. List of libraries to be installed on the cluster."] = None,
+    max_clusters_per_user: Annotated[Optional[int] | None, "Optional. Maximum number of clusters that a user can create with this policy."] = None,
+    policy_family_definition_overrides: Annotated[Optional[dict] | None, "Optional. JSON string containing overrides for the policy family definition."] = None,
+    policy_family_id: Annotated[Optional[str] | None, "Optional. ID of the policy family to which this cluster policy belongs."] = None,
+    ) -> str:
+    """Create a cluster policy"""
+    url = "/api/2.0/policies/clusters/create"
+    data = {
+        "name": name,
+        "definition": definition,
+        "description": description,
+        "libraries": libraries,
+        "max_clusters_per_user": max_clusters_per_user,
+        "policy_family_definition_overrides": policy_family_definition_overrides,
+        "policy_family_id": policy_family_id,
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def delete_cluster_policy(policy_id: str) -> str:
+    """Delete a cluster policy"""
+    url = "/api/2.0/policies/clusters/delete"
+    data = {"cluster_policy_id": policy_id}
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def update_cluster_policy(
+    policy_id: str,
+    name: Annotated[Optional[str] | None, "Optional. Name of the cluster policy."] = None,
+    definition: Annotated[Optional[dict] | None, "Optional. Dictionary containing policy definition. Example: {'custom_tags.test_tag': {'type': 'fixed', 'value': 'test_value'}}"] = None,    
+    description: Annotated[Optional[str] | None, "Optional. Description of the cluster policy."] = None,
+    libraries: Annotated[Optional[List[str]] | None, "Optional. List of libraries to be installed on the cluster."] = None,
+    max_clusters_per_user: Annotated[Optional[int] | None, "Optional. Maximum number of clusters that a user can create with this policy."] = None,
+    policy_family_definition_overrides: Annotated[Optional[dict] | None, "Optional. JSON string containing overrides for the policy family definition."] = None,
+    ) -> str:
+    """Update a cluster policy"""
+    url = "/api/2.0/policies/clusters/edit"
+    data = {
+        "policy_id": policy_id,
+        "name": name,
+        "definition": definition,
+        "description": description,
+        "libraries": libraries,
+        "max_clusters_per_user": max_clusters_per_user,
+        "policy_family_definition_overrides": policy_family_definition_overrides,
+    }
+    response = requests.post(databricks_host + url, headers=headers, json=data)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def get_cluster_policy(policy_id: str) -> str:
+    """Get a cluster policy"""
+    url = f"/api/2.0/policies/cluster/get"
+    params = {"cluster_policy_id": policy_id}
+    response = requests.get(databricks_host + url, headers=headers, params=params)
+    return response.text
+
+@mcp.tool(tags=["workspace", "compute", "cluster_policies"])
+def list_cluster_policies(
+    sort_order: Annotated[Optional[Literal["ASC", "DESC"]] | None, "Optional. Sort order of the cluster policies."] = None,
+    sort_column: Annotated[Optional[Literal["POLICY_CREATION_TIME", "POLICY_NAME"]] | None, "Optional. Column to sort the cluster policies by."] = None,
+) -> str:
+    """List all cluster policies"""
+    url = "/api/2.0/policies/cluster/list"
+    params = {
+        "sort_order": sort_order,
+        "sort_column": sort_column
+    }
+    response = requests.get(databricks_host + url, headers=headers, params=params)
+    return response.text
+
 if __name__ == "__main__":
     mcp.run()

@@ -2,7 +2,7 @@
 The Databricks MCP (Model Context Protocol).
 
 ## Features
-Current implementation support the "Git Credentials" and "Repos" endpoint from the Databricks API.
+Current implementation support all "Databricks Workspace" endpoints from the Databricks API.
 
 ## Usage
 
@@ -52,3 +52,4 @@ The MCP Databricks API currently support the following endpoints:
 |   ✅   | workspace | databricks_workspace | repos |
 |   ✅   | workspace | databricks_workspace | secret |
 |   ✅   | workspace | databricks_workspace | workspace |
+|   ✅   | workspace | compute | cluster_policies |
